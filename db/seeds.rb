@@ -1,7 +1,15 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
+require 'rest-client'
+require 'json'
+
+
+baseURL = 'https://covid19-api.weedmark.systems/api/v1/stats'
+data = RestClient.get baseURL
+parsed_data = JSON.parse(data)
+
+
+parsed_data['data']['covid19Stats'].map do |location|
+    Location.create(city: location["city"], province: location["province"], country: location["country"], lastUpdate: location["lastUpdate"], keyId: location["keyId"],confirmed: location["confirmed"], deaths: location["deaths"], recovered: location["recovered"])
+end
+
+
+
